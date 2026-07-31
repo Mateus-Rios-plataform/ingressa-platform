@@ -1,0 +1,32 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8090:8080"
+    environment:
+      DB_URL: ${DB_URL}
+      JWT_SECRET: ${JWT_SECRET}
+      SETTINGS_ENC_KEY: ${SETTINGS_ENC_KEY}
+    depends_on:
+      db:
+        condition: service_healthy
+  
+  
+  db: 
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    volumes: 
+      - db_data:/var/lib/postgresql/data
+      - ./internal/database/sql/schema_main.sql:/docker-entrypoint-initdb.d/schema_main.sql:ro
+    healthcheck: 
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+
+volumes:
+  db_data:

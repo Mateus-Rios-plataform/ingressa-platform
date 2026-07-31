@@ -1,0 +1,12 @@
+# Segredos — nunca versionar. O .env.example (com placeholders) SIM vai pro repo.
+.env
+.env.local
+*.env
+
+# Material bruto de gravação (pesado). Só o GIF/PNG final entra em docs/img/.
+*.mov
+*.mp4
+
+# Sistema operacional
+.DS_Store
+**/.DS_Store

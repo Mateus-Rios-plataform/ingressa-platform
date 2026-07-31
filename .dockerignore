@@ -1,0 +1,17 @@
+inspiracao/
+.claude/
+.agents/rules/
+.dockerignore
+.gitignore
+ARQUITETURA.md
+backend_rules.md
+docker-compose.yml
+run.sh
+sqlc.yaml
+.git/
+scripts/
+**/.DS_Store
+uploads/
+Dockerfile
+.env
+*.env
