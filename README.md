@@ -109,17 +109,42 @@ e superfície de ataque desnecessária.
 
 ### Persistência: os dados sobrevivem ao restart
 
-<!-- TODO PRINT ③  ← salvar como: docs/img/volume-persistencia.png
-     Sequência a capturar numa sessão só:
-       1. docker compose up -d
-       2. criar um registro no banco
-       3. docker compose restart db
-       4. mostrar que o registro AINDA ESTÁ LÁ
-       5. (o contraste) docker compose down -v  → agora sumiu
+Container é efêmero por natureza: destruiu, perdeu o que estava dentro. Um banco
+de dados não pode funcionar assim. A sequência abaixo é a verificação de que o
+volume nomeado resolve isso — e de onde está o limite.
 
-     O passo 5 é o que demonstra que você entende a diferença entre
-     `down` e `down -v`.
--->
+**1. Cria um registro e confirma que ele está no banco.**
+
+![docker compose up, cadastro via API e consulta retornando o registro](docs/img/volume-persistencia-1.png)
+
+A stack sobe (`4/4`, com o `db` passando pelo healthcheck antes do `app`), uma
+empresa é cadastrada pela API e o `select` confirma o dado gravado. Em seguida,
+`docker compose down` **destrói os containers**.
+
+**2. Sobe de novo: o dado continua lá.**
+
+![após novo up, a consulta ainda retorna persistencia@teste.com](docs/img/volume-persistencia-2.png)
+
+Containers novos, banco novo em memória — e o mesmo `select` devolve
+`persistencia@teste.com (1 row)`. Os dados vivem no volume `db_data`, que existe
+fora do ciclo de vida do container.
+
+Repare num detalhe que o próprio Compose informa: aqui ele reporta `Running 3/3`
+e **não** aparece linha de `Volume`. Ele não criou nada — o volume já existia e
+foi apenas reconectado.
+
+**3. Agora `down -v`: aí sim os dados somem.**
+
+![após down -v e novo up, a consulta retorna 0 rows](docs/img/volume-persistencia-3.png)
+
+Com a flag `-v`, o Compose remove também o volume — visível na linha
+`Volume projetodesite_db_data Remove...`. Na subida seguinte ele volta a
+`Running 4/4`, agora **com** `Volume "projetodesite_db_data" Cre...`: volume novo,
+vazio. O `schema_main.sql` roda de novo pelo `initdb.d` (por isso a tabela existe)
+e o `select` devolve `(0 rows)`.
+
+É a diferença entre `down` e `down -v`, demonstrada em vez de afirmada — e a
+razão pela qual re-testar a criação do schema exige apagar o volume antes.
 
 ---
 
