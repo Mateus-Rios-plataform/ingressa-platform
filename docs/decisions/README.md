@@ -38,9 +38,15 @@ não registro técnico.
 | # | Decisão | Status |
 |---|---|---|
 | [0001](0001-multi-stage-build.md) | Build multi-stage para a imagem de produção | aceito |
+| [0007](0007-boot-fail-fast-e-segredos-por-proposito.md) | Boot fail-fast e segredos por propósito | aceito |
 
 <!-- TODO: os próximos ADRs a escrever, em ordem de valor pra entrevista.
      O 0001 abaixo está escrito por inteiro como modelo — os outros são seus.
+     O 0007 já foi escrito (fora de ordem, motivado por uma fase de hardening
+     de segurança) — ficou mais rico que a ideia original do TODO: não é só
+     ".env em vez de hardcoded", é fail-fast na validação da chave + uma
+     chave por propósito (sessão de tenant vs. painel administrativo vs.
+     cifra em repouso).
 
      0002 — Usuário não-root na imagem final
             (contexto: root do container = uid 0 do host; alternativas: rodar como
@@ -62,8 +68,4 @@ não registro técnico.
 
      0006 — Não instalar ca-certificates
             (este é o mais interessante de todos porque é uma decisão de NÃO
-             fazer algo, sustentada por um teste comparativo que você rodou)
-
-     0007 — Segredos via .env em vez de hardcoded no compose
-            (alternativas: Docker secrets, secret manager na nuvem;
-             consequência: .env não versionado exige .env.example + disciplina) -->
+             fazer algo, sustentada por um teste comparativo que você rodou) -->
